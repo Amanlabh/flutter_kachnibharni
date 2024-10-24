@@ -35,8 +35,8 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    // Trigger the interest selection popup after 5 seconds
-    Future.delayed(const Duration(seconds: 5), () {
+    // Trigger the interest selection popup after 1 second
+    Future.delayed(const Duration(seconds: 1), () {
       _showInterestSelectionDialog();
     });
   }
@@ -48,7 +48,7 @@ class _HomePageState extends State<HomePage> {
       builder: (context) {
         return AlertDialog(
           title: const Text('Select Your Interests'),
-          content: InterestSelection(), // Custom widget for interest selection
+          content: const InterestSelection(), // Custom widget for interest selection
           actions: [
             TextButton(
               onPressed: () {
