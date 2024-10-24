@@ -5,9 +5,8 @@ import 'cart.dart'; // Import the cart.dart file
 import 'bottom_button_bar.dart'; // Import the bottom_button_bar.dart file
 import 'chat_list_page.dart'; // Corrected import to chat_list_page.dart
 
-
 void main() {
-  runApp(SocialMediaApp());
+  runApp(const SocialMediaApp());
 }
 
 class SocialMediaApp extends StatelessWidget {
@@ -20,13 +19,48 @@ class SocialMediaApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: HomePage(),
+      home: const HomePage(),
     );
   }
 }
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
+
+  @override
+  _HomePageState createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  @override
+  void initState() {
+    super.initState();
+    // Trigger the interest selection popup after 5 seconds
+    Future.delayed(const Duration(seconds: 5), () {
+      _showInterestSelectionDialog();
+    });
+  }
+
+  // Method to show the interest selection popup
+  void _showInterestSelectionDialog() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Select Your Interests'),
+          content: InterestSelection(), // Custom widget for interest selection
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              child: const Text('Done'),
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -54,7 +88,7 @@ class HomePage extends StatelessWidget {
               // Navigate to ChatListPage when the chat icon is tapped
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => ChatListPage()),
+                MaterialPageRoute(builder: (context) => const ChatListPage()),
               );
             },
           ),
@@ -64,24 +98,78 @@ class HomePage extends StatelessWidget {
               // Navigate to CartPage when the cart icon is tapped
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => CartPage()),
+                MaterialPageRoute(builder: (context) => const CartPage()),
               );
             },
           ),
         ],
       ),
-      body: Column(
+      body: const Column(
         children: [
-          const StoriesSection(), // Ensure this widget is correctly defined
+          StoriesSection(), // Ensure this widget is correctly defined
           Expanded(child: PostList()), // Ensure PostList is correctly defined
         ],
       ),
-     
       bottomNavigationBar: const BottomButtonBar(), // Add the custom BottomButtonBar
     );
   }
 }
 
+// Custom widget to display the list of interests
+class InterestSelection extends StatefulWidget {
+  const InterestSelection({super.key});
+
+  @override
+  _InterestSelectionState createState() => _InterestSelectionState();
+}
+
+class _InterestSelectionState extends State<InterestSelection> {
+  // List of interests
+  final List<String> interests = [
+    'Madhubani painting',
+    'Sculptures',
+    'Oil',
+    'Pop Art',
+    'Abstract Art',
+    'Gouache',
+    'Acrylic Paint',
+    'More'
+  ];
+
+  // To track selected interests
+  final Map<String, bool> selectedInterests = {};
+
+  @override
+  void initState() {
+    super.initState();
+    // Initialize selectedInterests to false for all interests
+    for (var interest in interests) {
+      selectedInterests[interest] = false;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: interests.map((interest) {
+          return CheckboxListTile(
+            title: Text(interest),
+            value: selectedInterests[interest],
+            onChanged: (bool? value) {
+              setState(() {
+                selectedInterests[interest] = value!;
+              });
+            },
+          );
+        }).toList(),
+      ),
+    );
+  }
+}
+
+// The PostList widget remains unchanged
 class PostList extends StatelessWidget {
   const PostList({super.key});
 
@@ -108,7 +196,8 @@ class PostList extends StatelessWidget {
                   children: [
                     Text(
                       "Post Title $index",
-                      style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      style: const TextStyle(
+                          fontSize: 18, fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 5),
                     Text(
