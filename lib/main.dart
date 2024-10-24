@@ -35,45 +35,26 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    // Trigger the interest selection popup after 1 second
-    Future.delayed(const Duration(seconds: 1), () {
+    // Trigger the interest selection popup after 5 seconds
+    Future.delayed(const Duration(seconds: 5), () {
       _showInterestSelectionDialog();
     });
   }
 
-  // Function to show the interest selection popup
+  // Method to show the interest selection popup
   void _showInterestSelectionDialog() {
     showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: const Text("Select Your Interest"),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Text("Choose one or more interests:"),
-              const SizedBox(height: 20),
-              Wrap(
-                spacing: 10,
-                children: [
-                  ChoiceChip(label: const Text("Madhubani painting"), selected: false),
-                  ChoiceChip(label: const Text("Sculptures"), selected: false),
-                  ChoiceChip(label: const Text("Oil"), selected: false),
-                  ChoiceChip(label: const Text("Pop Art"), selected: false),
-                  ChoiceChip(label: const Text("Abstract Art"), selected: false),
-                  ChoiceChip(label: const Text("Gouache"), selected: false),
-                  ChoiceChip(label: const Text("Acrylic Paint"), selected: false),
-                  ChoiceChip(label: const Text("More"), selected: false),
-                ],
-              ),
-            ],
-          ),
+          title: const Text('Select Your Interests'),
+          content: InterestSelection(), // Custom widget for interest selection
           actions: [
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop(); // Close the dialog
               },
-              child: const Text("Done"),
+              child: const Text('Done'),
             ),
           ],
         );
@@ -134,6 +115,61 @@ class _HomePageState extends State<HomePage> {
   }
 }
 
+// Custom widget to display the list of interests
+class InterestSelection extends StatefulWidget {
+  const InterestSelection({super.key});
+
+  @override
+  _InterestSelectionState createState() => _InterestSelectionState();
+}
+
+class _InterestSelectionState extends State<InterestSelection> {
+  // List of interests
+  final List<String> interests = [
+    'Madhubani painting',
+    'Sculptures',
+    'Oil',
+    'Pop Art',
+    'Abstract Art',
+    'Gouache',
+    'Acrylic Paint',
+    'More'
+  ];
+
+  // To track selected interests
+  final Map<String, bool> selectedInterests = {};
+
+  @override
+  void initState() {
+    super.initState();
+    // Initialize selectedInterests to false for all interests
+    for (var interest in interests) {
+      selectedInterests[interest] = false;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: interests.map((interest) {
+          return CheckboxListTile(
+            title: Text(interest),
+            value: selectedInterests[interest],
+            onChanged: (bool? value) {
+              setState(() {
+                selectedInterests[interest] = value!;
+              });
+            },
+          );
+        }).toList(),
+      ),
+    );
+  }
+}
+
+// The PostList widget remains unchanged
 class PostList extends StatelessWidget {
   const PostList({super.key});
 
@@ -160,7 +196,8 @@ class PostList extends StatelessWidget {
                   children: [
                     Text(
                       "Post Title $index",
-                      style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      style: const TextStyle(
+                          fontSize: 18, fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 5),
                     Text(
